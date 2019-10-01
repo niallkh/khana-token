@@ -34,30 +34,30 @@ interface ERC20Interface {
 
 contract ERC20Implementation is ERC20Interface {
 
-    string private name = "KhaNa Token";
-    string private symbol = "KHT";
-    uint8 private decimals = 18;
+    string private _name = "KhaNa Token";
+    string private _symbol = "KHT";
+    uint8 private _decimals = 18;
     uint private totalAmount;
 
     mapping(address => uint) private balances;
 
-    mapping(address => mapping(address => uint)) private allowance;
+    mapping(address => mapping(address => uint)) private allowances;
 
-    constructor(uint amount) {
+    constructor(uint amount) public {
         totalAmount = amount;
-        balances[msg.sener] = amount;
+        balances[msg.sender] = amount;
     }
 
     function name() external view returns (string memory) {
-        return name;
+        return _name;
     }
 
     function symbol() external view returns (string memory) {
-        return symbol;
+        return _symbol;
     }
 
     function decimals() external view returns (uint8) {
-        return decimals;
+        return _decimals;
     }
 
     function totalSupply() external view returns (uint) {
@@ -72,8 +72,8 @@ contract ERC20Implementation is ERC20Interface {
     function transfer(address to, uint tokens)
         external returns (bool success) {
             require(balances[msg.sender] >= tokens, "not enough tokens");
-            balances[mes.sender] = balances[mes.sender] - tokens;
-            balances[to] = balances[to] - tokens;
+            balances[msg.sender] = balances[msg.sender] - tokens;
+            balances[to] = balances[to] + tokens;
             emit Transfer(msg.sender, to, tokens);
             return true;
         }
@@ -81,12 +81,12 @@ contract ERC20Implementation is ERC20Interface {
     function transferFrom(address from, address to, uint tokens)
         external returns (bool success) {
             require(
-                allowance[from][msg.sender] >= tokens,
-                "not enough tokens in allowance"
+                allowances[from][msg.sender] >= tokens,
+                "not enough tokens in allowances"
             );
             require(balances[from] >= tokens, "not enough tokens");
-            balance[from] = balances[from] - tokens;
-            allowance[from][msg.sender] = allowance[from][msg.sender] - tokens;
+            balances[from] = balances[from] - tokens;
+            allowances[from][msg.sender] = allowances[from][msg.sender] - tokens;
             balances[to] = balances[to] + tokens;
             emit Transfer(from, to, tokens);
             return true;
@@ -94,13 +94,13 @@ contract ERC20Implementation is ERC20Interface {
 
     function approve(address spender, uint tokens)
         external returns (bool success) {
-            allowance[msg.sender][sender] = tokens;
+            allowances[msg.sender][spender] = tokens;
             emit Approval(msg.sender, spender, tokens);
             return true;
         }
 
     function allowance(address tokenOwner, address spender)
         external view returns (uint remaining) {
-            return allowance[tokenOwner][spender];
+            return allowances[tokenOwner][spender];
         }
 }
