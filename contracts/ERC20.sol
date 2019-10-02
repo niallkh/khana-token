@@ -44,8 +44,8 @@ contract ERC20Implementation is ERC20Interface {
     mapping(address => mapping(address => uint)) private allowances;
 
     constructor(uint amount) public {
-        totalAmount = amount;
-        balances[msg.sender] = amount;
+        totalAmount = amount * uint(10) ** _decimals;
+        balances[msg.sender] = amount * uint(10) ** _decimals;
     }
 
     function name() external view returns (string memory) {
